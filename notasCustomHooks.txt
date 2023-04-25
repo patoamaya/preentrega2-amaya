@@ -1,0 +1,30 @@
+Son como funciones JS pero que las pasamos como Hooks para que React las entienda perfectamente. En principio, sería como hacer una función normal de JS, pero le ponemos el prefijo "use" ej: "useCounter" "useLista"
+La ventaja de darle a entender a React que estamos haciendo un customHook y no una función común de JS, es que al detectar esto, nos va a dar acceso a los hooks de React, useEffect, useState, etc. que no podríamos tener acceso en una función comun
+
+Otra ventaja con la que corremos usando el custom hook es que podemos hacer uso de él donde queramos
+
+Por ejemplo, en el ItemListContainer, llamamos al custom hook que creamos, useCounter, pero primero lo metemos en una variable que nos deje desestructurarlo, ya que quizá no queremos traer la funcion de sumar, restar o resetear, sino que solamente queremos ver el contador activo
+Después como cualquier otro btn, le metemos el onClick={increment / dcrement / counter / etc}. No se van a sobreponer si lo usamos en distintos contextos, o sea, si lo usamos en ItemList y en itemDetail, cuando sumemos o restemos en uno, no se va a chocar con el otro.
+Si en el custom hook de counter le pongo que arranque en valor initial, despues en cada archivo que yo tenga puedo pasarle valores diferentes para que arranque segun lo precise 
+
+
+Se puede crear un custom hook de fetching de datos para no tener que andar creandolo en cada componente y asi solo importarlo
+Con el useFetch voy a necesitar enviar como parametro el endpoint o url a escribir, ya que de ahí van a salir los datos según necesite cada componente de manera dinámica. De la misma manera, en el useState(aca pondremos initial tambien, pasandolo primero como parámetro cuando se crea el useFetch para que cada conmponente lo inicie como quiera y no de una manera predeterminada, puede ser un array, un objeto, etc)
+En el arreglo de dependencias del useFetch vamos a poner a la escucha del endpoint para que cuando se cambie, se renderice nuevamente todo y no quede estancado
+No olvidar que para hacer un .get hay que meter la peticion en una variable o constante, en este caso es 
+let getData = axios.get(endpoint)  para despues hacerle un .then a dicha promesa
+
+Pasando en limpio:
+1ro
+Un estado que se va a inicializar cuando le pasen el endpoint y su valor/lugar de guardado(array, obj) en el llamado de la funcion
+
+2do
+Un useEffect que nos va a crear la petición al back/api cuando se llame a la funcion. Dentro de él, tenemos la promesa pertinente, que debemos manejar con el .then para que desaparezca el valor "initial" que pusimos para arrancar el estado y sea reemplazado por el valor de la devolución de la promesa (res.data)
+
+3ro
+Retornamos la data, que es todo lo que se fue juntando durante el useEffect y almacenando en el useState
+Lo retornamos dentro de un objeto {data} por buenas practicas, por más que sea un solo valor el que se retorne, ya que si después queremos agregar algo más dentro de la función, solo tendríamos que poner una , y agregar el que siga dentro del obj del return
+
+PruebasFetch1y2
+
+Usamos el custom hook del fetching y se nota como se reduce el codigo. Recordar de pasar la KEY, en este caso es el ID de cada USER. Lo pasamos en la primer etiqueta que lo renderiza, en este caso, el h1
