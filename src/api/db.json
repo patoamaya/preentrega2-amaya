@@ -110,20 +110,6 @@
       "precio": "1.830.000",
       "ubicacion": "Banfield | GBA Sur",
       "img": "https://res.cloudinary.com/dx4qsxcb7/image/upload/v1681588565/autos/duster_i2abud.jpg"
-    },
-    {
-      "marca": "Honda",
-      "stock": 2,
-      "modelo": "Civic",
-      "version": "SI",
-      "año": "2008",
-      "color": "Negro",
-      "kms": "140.000",
-      "precio": "4.600.000",
-      "categoria": "auto",
-      "ubicacion": "Belgrano | CABA",
-      "img": "https://res.cloudinary.com/dx4qsxcb7/image/upload/v1682302315/autos/civic_mjgohs.jpg",
-      "id": 9
     }
   ]
 }

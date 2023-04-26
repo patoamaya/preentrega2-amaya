@@ -1,20 +1,23 @@
-import "./App.css";
-import { Navbar } from "./components/Navbar/Navbar";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ItemListContainer from "./components/ItemList/ItemListContainer";
-import CounterContainer from "./components/Counter/CounterContainer";
-import FetchingData from "./components/FetchingData/FetchingData";
 import ItemDetailContainer from "./components/ItemDetail/ItemDetailContainer";
+import { Navbar } from "./components/Navbar/Navbar";
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <Navbar />
-      <ItemListContainer />
-      {/* <ItemDetailContainer /> */}
-      {/* <CounterContainer /> */}
-      {/* <FetchingData /> */}
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route element={<Navbar />}>
+          <Route path="/" element={<ItemListContainer />} />
+          <Route
+            path="/category/:categoryName"
+            element={<ItemListContainer />}
+          />
+          <Route path="/ItemDetail/:id" element={<ItemDetailContainer />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
-}
+};
 
 export default App;

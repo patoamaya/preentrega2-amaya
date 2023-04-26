@@ -15,12 +15,15 @@ ul {
   /* margin-left: -10rem; */
   gap: 10rem;
 }
-li {
+.link {
   display: flex;
   cursor: pointer;
+  text-decoration: none;
+  color: black;
+  font-size: 1.4rem;
   /* justify-content: end; */
 }
-li:hover {
+.link:hover {
   color: rgb(224, 121, 255);
   transition: 0.3s;
 }

@@ -1,0 +1,8 @@
+En el App.js vamos a tener componentes que encierren a otros, los que encierran (wrappers) y los que son encerrados (children)
+Básicamente la función de esto es que se pueda visualizar al componente padre siempre en sus children, es decir, si hacemos que el Navbar sea padre de itemlist,itemlistdetail, counter, etc, se va a poder visualizar el Navbar siempre. 
+Si no queremos que se visualice, por ej, en un login, solamente lo dejamos fuera del wrap 
+Si solo lo ponemos como hijo pero no le damos "permiso" desde el padre, no van a aparecer los children renderizados.
+
+Hay una prop que llega automaticamente al padre desde el App.js que se llama children, e invoca un array con todos los children que éste tiene. Si lo traemos desestructurado {children}, nos va a dar el array con cada objeto especifico de cada children
+
+Para que esto funcione, debemos pasarle esta prop desestructurada (children) abajo de todo en el archivo padre, en caso de que queramos que sea abajo del Navbar en este caso, pasandola entre {children} y listo, ya está su permiso para aparecer

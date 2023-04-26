@@ -1,0 +1,7 @@
+En PruebaFetch1/2, a la hora de mapear los datos recibidos y almacenados en {data}, vemos que se pone:
+data?.map(user etc)
+
+Ese signo de interrogación viene a cumplir la funcion una suerte de filtro que significa: 'si la info en data es un truthy, entonces mapeala, si no lo es, no la mapees asi no se rompe el codigo', en caso de que necesite un segundo renderizado para aparecer o sea un array vacio(mostrará todo vacio), lo esperará y no tirará el error de que lo que estamos tratando de mapear no es un array.
+La mejor práctica es inicializarlo como un array vacío cuando usamos el hook de useEffect, pero en caso de que esto devuelva algo null o undefined, ese operador nos va a ayudar a arreglar el error. Ponerlo y tambien poner el array vacio es redundancia
+
+Tambien se lo podemos pasar, siempre antes de la Notacion de punto, a por ej, el user.id o user.name, ya que ahi va a esperar a que exista el usuario para renderizarlo, si el usuario todavia no esta definido, entonces no lo trae.

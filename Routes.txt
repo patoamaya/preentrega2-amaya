@@ -1,0 +1,82 @@
+Esto es una SPA, aunque parezca tener muchas paginas, es un solo HTML que solo cambia de vistas con las rutas
+
+El enrutado es lo primero que debe hacerse. Se prepara todo y desp se hacen los componentes 
+
+Instalamos con npm i react-router-dom para usar las rutas
+
+Apenas cargamos nuestra pag. lo que queremos ver es nuestra ruta raiz, que es como decir el index.html
+Vamos a estar inyectando en el mismo documento diferentes porciones de código para poder alternar las vistas, por ej, para ver los detalles de distintas cards de nuestro e-commerce. Lo que vamos a cambiar es lo que el usurario ve
+
+En lo que vamos a importar en cada app.js que es: {BrowserRouter , Routes , Route}
+
+tenemos:
+
+BrowserRouter:
+Nos permite decirle a la aplicacion que vamos a hacer un sistema de enrutado con esta libreria. Es el que nos va a dar acceso al enrutado. Se usa como componente de apertura y cierre en distinta linea.
+Se usa como Wrapper
+<BrowserRouter>
+<Routes>
+<Route/>
+</Routes>
+</BrowserRouter>
+
+Routes:
+Donde vamos a configurar cada ruta unica, tiene que envolver a las Route
+
+Route:
+De apertura y cierre en misma linea, es la hija menor, va envuelta en Routes. Esta hija tiene la lógica. Puede llevar cuantas rutas quiera
+
+
+Para empezar a definir la ruta, dentro de app.js tengo que pasarle dos parametros a la "Route", estos son: PATH y ELEMENT
+
+PATH:
+Recibe un string, siempre comienza con un /. Es lo que va escrito en la URL para que se vea en que ruta estoy
+
+ELEMENT:
+Recibe un componente, éste será el componente que yo quiera renderizar cuando el usuario acceda a ese path
+
+La ruta raiz, principal, vamos a ponerla en el path como "/" y element componente de ruta raiz = {}
+
+LA otra ruta que debe estar si o si como la raiz, es la que se escribe de la siguiente manera:
+<Route path= "*" element = {componente de mensaje de error}/>
+
+Y nos sirve para mostrar un mensaje de error cuando por alguna razon el usuario consiga entrar a una ruta que no existe o que no esté configurada en el Routes 
+
+Para poder renderizar el Navbar en todas las rutas, abrimos una Route que envuelva a las demás, o a las que queremos que muestren el navbar, saltemos el path y dejamos unicamente el element con el componente del navbar. Usamos como layout el navbar
+
+Tal como haciamos de permiso para los children del Navbar antes, ahora lo que hacemos es importar {Outlet} from "react-router-dom" y lo hacemos renderizar abajo de todo del navbar, igual que con los children del otro archivo. 
+
+Si quiero poner el Footer, vuelvo a hacer una route con el element ={<footer/>} que envuelva a todos las otras rutas menos el navbar, pero en ese caso, en el componente footer, renderizamos el Outlet por encima del componente, asi no se pone arriba 
+
+Circular entre las rutas:
+
+Por ejemplo, si queremos que el logo de la pagina que se encuentra en el navbar nos habilite a ir a la ruta raíz, vamos a ir a dicho logo, a la imagen, y vamos a usar una etiqueta que es como el </a> de html, pero que se llama Link. Debemos importarla primero y despues la usamos como Wrapper de la img.
+Quedaría así:
+<Link to="/">
+img etc etc
+</Link>
+
+Escribimos to para que detecte a continuación a dónde ir, después ponemos entre comillas el path 
+
+La principal ventaja ante la etiqueta <a></a> es que ésta recarga la página cada vez que la clickeamos, mientras que la <Link/> no recarga jamás, haciendo posible el guardado de datos.
+
+De la misma manera encerramos lo que querramos, por ej el boton de ver mas en las cards. Se podría encerrar toda la card para que donde sea que le den click te lleve a la ruta de detalle del elemento tipo ML 
+
+
+Rutas dinámicas:
+Para que se tome un dato dinamico, ej el id, lo ponemos en el path asi:
+"/ItemDetail/:id" entonces ya va a saber que lo que viene desp del /: es lo dinamico
+
+Lo que sigue es ir al componente ItemDetailContainer para hacer que consuma esa parte del path.
+Importamos y usamos un hook llamado useParams()
+Este hook nos devuelve el objeto que le pasamos al valor usado. 
+El nombre de la propiedad va a ser el nombre que le pongamos en la ruta :id x ej KEY
+El valor de la propiedad va a ser la parte dinamica de la ruta. Es un KEY-VALUE
+Para tener acceso a esa parte dinamica vamos a tener que desestructurar la KEY en este caso que es el :id e igualarlo a un useParams
+En este caso debemos ir a dnd esta el boton del card para ver mas y en el linl to ponemos asi <Link to={`/ItemDetail/${item.id}`}>. Con las {} le decimos que vamos a usar JS y con los backticks ponemos todo el ruteo, asi pudiendo poner $item.id que es lo dinamico. No lleva los : como cuando se CREA la ruta dinámica en el app.js
+
+Como el id que viene a traer el useParams es un string, tenemos que convertir al id que llamamos en ItemDetailContainer a nro. Esto se hace cuando hacemos el find... === id solo que ahora lo igualamos asi:
+=== +id convirtiendolo a nro y que haga la igualacion en nro a nro y no nro a string
+
+
+Para hacer la navegación entre los elementos que tenemos en el navbar vamos a usar más o menos la misma lógica que antes

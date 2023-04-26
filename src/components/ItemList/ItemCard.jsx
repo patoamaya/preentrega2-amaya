@@ -7,12 +7,9 @@ import {
   Typography,
 } from "@mui/material";
 import "./ItemList.css";
+import { Link } from "react-router-dom";
 
-const ItemCard = ({
-  item,
-  deleteProduct = { deleteProduct },
-  updateProduct = { updateProduct },
-}) => {
+const ItemCard = ({ item }) => {
   return (
     <div>
       <Card className="Card">
@@ -34,20 +31,9 @@ const ItemCard = ({
           </Typography>
         </CardContent>
         <CardActions>
-          <Button size="medium">Ver más</Button>
-        </CardActions>
-        <CardActions>
-          <Button
-            size="medium"
-            onClick={() => updateProduct(item.id, { kms: "0" })}
-          >
-            Editar
-          </Button>
-        </CardActions>
-        <CardActions>
-          <Button size="medium" onClick={() => deleteProduct(item.id)}>
-            Borrar autito
-          </Button>
+          <Link to={`/ItemDetail/${item.id}`}>
+            <Button size="medium">Ver más</Button>
+          </Link>
         </CardActions>
       </Card>
     </div>
