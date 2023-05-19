@@ -15,13 +15,13 @@ BrowserRouter:
 Nos permite decirle a la aplicacion que vamos a hacer un sistema de enrutado con esta libreria. Es el que nos va a dar acceso al enrutado. Se usa como componente de apertura y cierre en distinta linea.
 Se usa como Wrapper
 <BrowserRouter>
-<Routes>
-<Route/>
-</Routes>
+    <Routes>
+        <Route/>
+    </Routes>
 </BrowserRouter>
 
 Routes:
-Donde vamos a configurar cada ruta unica, tiene que envolver a las Route
+Donde vamos a configurar cada ruta unica, tiene que envolver a cada Route
 
 Route:
 De apertura y cierre en misma linea, es la hija menor, va envuelta en Routes. Esta hija tiene la lógica. Puede llevar cuantas rutas quiera
@@ -44,9 +44,9 @@ Y nos sirve para mostrar un mensaje de error cuando por alguna razon el usuario 
 
 Para poder renderizar el Navbar en todas las rutas, abrimos una Route que envuelva a las demás, o a las que queremos que muestren el navbar, saltemos el path y dejamos unicamente el element con el componente del navbar. Usamos como layout el navbar
 
-Tal como haciamos de permiso para los children del Navbar antes, ahora lo que hacemos es importar {Outlet} from "react-router-dom" y lo hacemos renderizar abajo de todo del navbar, igual que con los children del otro archivo. 
+Tal como haciamos de permiso para los children del Navbar antes, ahora lo que hacemos es importar {Outlet}, que va a tomar el lugar de éstos, from "react-router-dom" y lo hacemos renderizar abajo de todo del navbar, igual que con los children del otro archivo. 
 
-Si quiero poner el Footer, vuelvo a hacer una route con el element ={<footer/>} que envuelva a todos las otras rutas menos el navbar, pero en ese caso, en el componente footer, renderizamos el Outlet por encima del componente, asi no se pone arriba 
+Si quiero poner el Footer, vuelvo a hacer una route con el element ={<footer/>} que envuelva a todos las otras rutas menos el navbar, pero en ese caso, en el componente footer, renderizamos el Outlet por encima del componente, asi no se pone arriba del contenido
 
 Circular entre las rutas:
 
@@ -79,4 +79,54 @@ Como el id que viene a traer el useParams es un string, tenemos que convertir al
 === +id convirtiendolo a nro y que haga la igualacion en nro a nro y no nro a string
 
 
-Para hacer la navegación entre los elementos que tenemos en el navbar vamos a usar más o menos la misma lógica que antes
+Para hacer la navegación entre los elementos que tenemos en el navbar vamos a usar más o menos la misma lógica que antes, con el link to en el navbar donde va cada sección a la que querramos ir
+De ahí vamos al componente ItemListContainer y, usando la lógica, pensamos que en el array de useState donde está "Items", que es el que va a ir almacenando los autos, a veces vamos a querer guardar en él todos los autos, otras veces los que estén en la categoria "SUVS" o los que estén en "autos", dependiendo siempre de lo que elijamos. Para eso hay que usar el método filter en el mock
+
+En principio hay que capturar la parte dinámica de la URL, en ese caso usamos el hook "useParams", que sirve justamente para eso. Capta automaticamente lo que hay en la url en la parte DINAMICA.
+
+En el ItemListContainer igualamos una constante al metodo filter asi:
+
+const productsFiltered = products.filter(prod => prod.category === categoryName)
+Igualamos al prod.category a categoryName, que es la que usamos como parte dinamica, pero como a veces lo que devuelva pueda ser undefined(caso de todos los productos o todos los vehiculos, que está destinado a la ruta raíz), debemos hacer un cambio en la promesa
+
+Luego d haber igualado a la constante {categoryName} = useParams para que detecte la parte dinamica de la url, vamos a la promesa y hacemos un ternario
+
+en resolve( categoryName ? productsFiltered : products)
+
+Le decimos: si categoryName es un truthy, mostrame productsFiltered, si es un falsy, mostrame products, que es el contenido completo sin el filtro aplicado. Luego en el mismo useEffect ponemos como arreglo de dependencias a categoryName, para que esté a la escucha de él y se renderice cada vez que cambie
+
+
+useNavigate()
+useNavigate es un hook que nos permite navegar entre vistas sin la necesidad el Link to, como primera instancia debemos importarlo junto al useParams del react-router-dom. Nos devuelve una funcion para navegar. Se puede ejecutar en cualquier lugar, boton, imagen, etc. La principal diferencia con el Link es que éste último no se puede usar donde haya lógica o funciones, por lo que nos puede servir más el navigate
+
+Para arrancar a usarlo, primero lo igualamos a una variable/ constante, usualmente con el nombre navigate
+
+const navigate = useNavigate()
+
+Esta funcion la disparamos y por parámetro le hacemos llegar a la ruta que queremos que vaya
+ej:
+onClick{() => navigate("/autos")} Ejemplificado en ItemCard.jsx
+Recordar que el evento "onClick" recibe una función, pero no la dispara él mismo
+Este es un caso en el cual queremos invocar una función que contiene un parámetro y tenemos que darle valor cuando la llamemos
+En este caso, para llamar a la función y que no se dispare inmediatamente por ser invocada y a la vez rompa la página por muchos renderizados seguidos,la invocamos en el onClick pasada como función flecha, de esa manera podemos escribir el argumento, cosa que si lo hiciésemos de manera directa, al pasar los argumentos ésta se dispararía automaticamente. Si no necesitamos pasarle ningun argumento, no es necesario 
+Ejemplo:
+
+const [numero, setNumero] = useState(0)
+const sumar = (num) =>{
+    setNumero(numero + num)
+}
+
+return(
+    <div>
+        <button onClick{sumar(50)}/>   - - - > este caso no va a funcionar, ya que disparará automaticamente la función sumar y ésta romperá la página, ya que lo que hará que se dispare es haberle metido el argumento que precisa sí o sí para poder funcionar, pero que a su vez la invoca.
+
+        <button onClick{()=> sumar(50)}/> - - - > Este caso sí va a funcionar, ya que no le estamos ejecutando, sino que con la funcion flecha evitamos que se ejecute apenas se monta el componente. Si o si cuando tiene parámetros hay que pasarla como callback. Esta se va a ejecutar unicamente cuando se haga click
+    </div>
+)
+
+Tenemos otra manera de navegar, teniendo un hook muy parecido al Link, pero se llama navLink, la ventaja que trae aparejado es que nos permite divisar en qué categoría estamos gracias a su propiedad isActive
+Al igual que como sucede en el css, se usa esta clase, pseudoclase en css, para saber si esta activa, abierta la pestaña o no.
+Llega como un boolean que detecta si esta abierta es categoria, mediante un ternario dice, si esta activa, le damos una clase a, mientras que a las que no estén activas tendrán otra clase distinta. Sirve para mostrarlo de otro color, o algo similar que a simple vista nos ayude a saber dónde estamos parados
+Encerramos cada seccion con la etiqueta NavLink, que nos va a dar el ternario armado que diga:
+ por ej:
+classname = {({isActive}) => isActive ? styles.active : styles.noActive} to ="/category/autos"

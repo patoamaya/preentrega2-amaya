@@ -7,19 +7,20 @@ import {
   Typography,
 } from "@mui/material";
 import "./ItemList.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const ItemCard = ({ item }) => {
+  const navigate = useNavigate();
   return (
     <div>
-      <Card className="Card">
+      <Card className="Card" onClick={() => navigate(`/ItemDetail/${item.id}`)}>
         <CardMedia
           className="CardMedia"
           component="img"
           alt={item.marca}
           image={item.img}
         />
-        <CardContent>
+        <CardContent className="content">
           <Typography gutterBottom variant="h5" component="div">
             {item.marca} {item.modelo} {item.version}
           </Typography>
@@ -27,7 +28,7 @@ const ItemCard = ({ item }) => {
             {item.kms} kms | {item.ubicacion}
           </Typography>
           <Typography gutterBottom variant="h4" component="div">
-            {item.precio}
+            ${item.precio}
           </Typography>
         </CardContent>
         <CardActions>

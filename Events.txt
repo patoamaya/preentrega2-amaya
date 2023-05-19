@@ -1,0 +1,82 @@
+Clase 10, EVENTOS
+
+Evento onChange()
+
+Se le asigna a los inputs, es el encargado de capturar cada tecla que el usuario apriete en el campo
+El evento onChange contiene en sí un callback, dentro de él vamos a llamarlo de alguna manera, por lo general "event" o "e". Donde e o event es un objeto, y cada objeto tiene sus propiedades y valores.
+Para acceder al valor de lo que escribamos en el input, basta con entrar a "event" o "e".target.value . target y value son las propiedades del objeto "e" y "target" respectivamente
+Para que el input lo guarde en la variable que querramos del useState es asi:
+let [nombre, setNombre] = useState("")
+
+
+<form onSubmit{}>
+    <input 
+        type="text"
+        value= {nombre}
+        name= "nombre" ---> para saber en que input estoy posicionado
+        onChange={(e)=> {setNombre(e.target.value)}} 
+    />
+</form>
+
+
+Evento onSubmit{}
+
+Es un evento que no va en los inputs, sino en el formulario. Se ejecuta cuando el formulario se envía.
+Recibe una funcion
+React se ocupa de mandar el parámetro que queramos desde el input a la funcion, sin necesidad de llamarlo en el input. Por eso no es necesario encerrarlo en otra funcion cuadno lo invoquemos en el onSubmit
+EN principio prevenimos el envio por defecto en la funcion, ya que si no lo hacemos, refrescaría la página y perderíamos todos los datos.
+Se va a disparar el onSubmit cuando clickeemos un button dentro del formulario. Debe llevar un type= "submit" para que los dispare. En caso de querer otro botón para borrar datos, o ir hacia atras con un link o navigate, etcm directamente le ponemos type= "button"
+En el onSubmit vamos a hacer toda la lógica que nos permita, por ejemplo, validar un login, con axios.post mandando los datos a ver si coinciden en el endpoint, etc
+
+const envioDeFormulario = (event)=>{
+event.preventDefault()
+}
+
+<form onSubmit{envioDeFormulario}>
+    <input 
+        type="text"
+        value= {nombre}
+        name= "nombre" ---> para saber en que input estoy posicionado
+        onChange={(e)=> {setNombre(e.target.value)}} 
+    />
+    <button type="submit">Enviar</button>
+</form>
+
+No tiene sentido hacer un useState para cada nombre, apellido etc, porque si fuesen muchos los inputs que voy a tener, tendría que hacer tambien muchisimos estados para ir actualizando, por lo que es más simple hacer de la siguiente manera para no escribir tanto codigo
+Un solo estado para ir cambiando, pero en vez de inicializar con un string vacio, lo inicializamos con un objeto a llenar de datos, con las key o propieades armadas pero las value vacias.
+
+  const [userData, setUserData] = useState({
+    nombre: "",
+    apellido: "",
+    });
+
+    cambiamos en cada input el setUserData({...userData, nombre:event.target.value}), lo colocamos como objeto con la propiedad que queremos usar. Con el spread operator le decimos que mantenga los datos que contiene userData actualmente y que además agregue en la nueva propiedad el valor de e.target.value. De lo contrario, cada vez que cambiemos algo de algun input, se va a tomar ese nuevo valor de la propiedad, pero también va a borrar todas los valores de las demás propiedades.
+    
+        Para que los inputs queden más limpios, vamos a sacar el contenido del onChange y lo vamos a meter en una funcion como hicimos con el onSubmit. Recordar que el e.target tambien tiene un valor, que en vez de ser el value, es el "name". Ese name se lo podemos dar a cada input en particular
+        Es de suma importancia que el name que le demos a cada input coincida con el name que estamos creando en el useState
+        Este name nos va a servir para que cambie de forma dinámica conforme se elijan distintos inputs
+    
+    const handleChange = (e) =>{
+    setUserData({ ...userData, [e.target.name]: e.target.value });
+   } 
+    Nomenclaturas:
+    Como e.target.name llega como un string(algo que suele pasar) y queremos hacerlo pasar como propiedad, debemos meterlo entre corchetes para que el codigo lo interprete como tal
+
+    por ej: si llegase 
+    let persona ={
+        nombre:"juan",
+        apellido:"perez"
+    }
+    console.log(persona.apellido) ---> funciona porque la propiedad es una propiedad  (dot.notation)
+    console.log(persona.["apellido"]) ---> sin el corchete no funcionaria porque es un string, que a su vez funciona como propiedad. El corchete nos sirve como si quisiésemos acceder a una posición de un array    [bracket.notation]
+
+
+    El spread sirve para esparcir todas las propiedades dentro de un nuevo objeto O
+     espacir todos los elementos dentro de un nuevo array
+
+
+     Renderizamos el counter en el ItemDetail para sumar y restar unidades
+
+     Agregamos una función llamada 'onAdd' para añadir unidades. Lo creamos en el ItemDetailContainer y se lo pasamos como prop a ItemDetail. ItemDetail lo recibe y lo pasa como prop a CounterContainer, ya que éste último tiene el counter y puede ejecutarlo en base a eso.
+     En el Counter presentacional la colocamos en un button usando como argumento al counter, que es el que irá cambiando. Recordar que no se puede pasar el argumento asi nomas porque ejecutaria la funcion, sino que iría en otra funcion flecha dentro del onAdd
+

@@ -1,0 +1,93 @@
+Como primera instancia vamos a detallar el problema que viene a resolver el context:
+Basicamente se intenta utilizar un componente dentro de otro que no sea hijo, en este caso, por ejemplo, querríamos que se muestre en el número del carrito que está en el navbar, el contador que usamos para agregar al carro, que es un componente en sí y que usamos en el ItemDetail. Así como también meter en la vista Cart a los elementos que queramos añadir en otro componente, como el ItemDetail
+El CartContainer tiene un estado local, por lo que no se puede acceder a él desde otro componente hermano o no-hijo 
+Lo idóneo es no hacer un estado local, sino un estado global, lo cual es un concepto de frontend, para que podamos usarlo en distintos lugares. Se lo puede pensar un poco como si fuese parte del scope
+Otro ejemplo de uso sería crear un switch para modo oscuro de la página, donde usemos un estado de forma global compartido en toda la app, cuando esté en true está todo claro y letras negras o en false y todo oscuro y letras blancas
+
+Creamos una carpeta llamada context en el src, no en components, sino en src 
+Dentro creamos el archivo cartContext.jsx, ya que será un componente al fin y al cabo. 
+Se pueden crear cuantos xContext queramos.      
+
+1ro- 2do- Crear un contexto y un componente proveedor 
+
+Hook createContext
+
+En este archivo importamos el hook {createContext} y lo igualamos a una constante de nombre CartContext y lo exportamos en la misma línea, todo fuera del CartContextProvider.
+Por convención, al archivo en sí se le llamará CartContextProvider para que no choque con el nombre del createContext
+Dentro del componente proveedor CartContextProvider, dentro del return, renderizamos la etiqueta con su método 'Provider' <CartContext.Provider></CartContext.Provider>
+
+3- Poner a disposicion el contexto
+Copiamos la etiqueta del componente proveedor <CartContextProvider></CartContextProvider> y las mandamos al App.js. Dentro del BrowserRouter las metemos y dentro de ellas metemos las routes y route
+Recordar que al hacer eso, hay que darle permiso desde el padre hacia el hijo, en este caso los hijos son todas las routes y route, asi que dentro del componente creado renderizamos, no sin antes recibir como parámetro los ({children}) al inicio de la funcion: <cartContext.Provider>{children}</cartContext.Provider>
+En el cartContext.Provider pasamos como prop una value que será un objeto, donde nos va a permitir decirle ahi dentro qué cosas de éste componente vamos a poder usar de forma global.
+<cartContext.Provider value={{saludar:saludar, cart:cart}}.
+
+Esto lo podemos declarar en una variable por fuera llamada data, por ej, y solo meter el "data" dentro del value y es más limpio 
+Recordar que si la key es igual al value se puede omitir uno de los dos, ej: data:data -> data y funcionará igual
+
+Dentro de context/CartContextProvider empezamos a escribir la logica, empezando con el useState etc
+
+Ahora quiero usar el número de context/cart para ver cuantos elementos voy cargando al carrito dentro del navbar donde está el widget del carrito
+
+El primer paso es identificar el lugar donde queremos consumir esa pieza de codigo, en este caso es el cartWidget
+Así como usamos el createContext para crear un contexto, en cualquier lugar que necesitemos usar el contexto, importaremos el hook "useContext", que se utiliza de la siguiente manera:
+Lo igualamos a una constante/variable y dentro del paréntesis le decimos qué context queremos utilizar, pasándoselo como argumento. En este caso hay que pasarle el contexto que exportamos directamente en el CartContextProvider, pero no el modulo entero, sino el que igualamos al useContext
+const datos = useContext(CartContext)
+si hacemos un console.log(datos) vamos a ver que nos trae todo lo guardado en la variable data()
+En el navbar no nos interesa todo lo que trae el data, directamente desestructuramos cuando lo declaramos con el useContext. Por ej, la funcion agregarAlCarrito, dentro del widget, no nos interesa, por lo que solo traemos el cart.
+Ya con eso podemos poner en el span que nos muestra la cantidad de art. en carrito con el cart.length
+En cada componente que queramos usarlo es la misma metodologia, importamos el nombre de la variable usada en el createContext, lo igualamos al useContext y desp lo usamos donde necesitemos, si necesitamos cosas especificas lo desestructuramos del lado del nombre de la variable. 
+En el ItemDetailContainer tenemos la función onAdd, encargada de añadir, desde el btn que está en el CounterContainer, todos los productos que veamos en detalle. Nosotros queremos que se añadan los productos  desde la función agregarAlCarrito, ubicada en el cartContext, así que la vamos a hacer ejecutar en el onAdd, no sin antes meter el useContext.
+La ejecutamos pasándole como argumento (data), que es el objeto creado dentro de onAdd, lo cual nos va a permitir meter dentro de ella la info del product más la cantidad elegida
+
+Recordar que agregarAlCarrito se ejecuta con el onAdd, pasándosele como argunmento el data, que tiene el ...product, etc. 
+
+En agregarAlCarrito seteamos con el product para que vaya llenando el array con los productos que vamos queriendo agregar.
+No olvidar que todo lo que entre como seteado va a pisar lo que haya antes, ya que eso es lo que hace el set, cambiar el contenido del array Cart. Por ello es que vamos a iterar con el spread el cart, para que no pise lo que habia antes y pueda ir sumando a lo que ya está
+
+const agregarAlCarrito = (product) =>{
+    setCart([...cart, product])
+}
+
+Para hacer el boton de limpiar carrito primero creamos la funcion limpiarCarrito en cartContext, despues le damos acceso a sus children pasando la funcion como objeto en data. Despues vamos a cartContainer(que renderiza a cart.jsx) y lo hacemos recibir en la funcion gral a "limpiarCarrito", luego se lo pasamos como prop al renderizado de cart.jsx
+Ya en cart.jsx lo volvemos a recibir en la funcion gral y la metemos en un onClick en el btn de limpiar
+
+
+Como quitar un elemento de un array en base a, por ejemplo, el ID. Puede llegar a ser pregunta de entrevista técnica!!
+Debemos hallar la manera de sacarlo sin mutar el array original
+La manera ideal es el método Filter()
+
+Para eliminar individualmente cada producto primero hacemos un btn en el div que metimos por producto mostrado en el Carts.jsx
+Hacemos una funcion eliminarProductoPorId(id) en el cartContext y la vamos mandando de una en una para q llegue al cart.jsx 
+Una vez puesta en el onClick, como va a necesitar un argumento para funcionar, la pasamos como callback
+En la funcion eliminarProductoPorId(id) vamos a hacer uso del metodo filter del cart. Le diremos que haga un filtrado y deje solo los elementos que sean DISTINTOS del id que pasamos como parámetrro, así nos permite eliminar ése elemento en particular.
+Después de eso seteamos al porductosFiltrados (nombre del filter) y listo.
+
+
+
+metodo some()=
+
+.Siempre devuelve un boolean
+.Si se cumple la condición aunque sea una vez, va a arrojar true
+
+El siguiente paso es hacer que no se sumen tarjetas si compramos muchas veces el mismo producto, sino que se sumen como unidades en la misma. Para eso usaremos el método some()
+Primero creamos una función que nos diga por medio de un boolean si el id que pasaremos como parámetro ya está en el array, en caso de que ya lo hayamos agregado, que tire true y si no está agregado, que tire false
+En el some le preguntamos si el prod.id es igual al id que estamso pasando como parámetro, si da true es pq ya está agregado, de lo contrario dará false
+Esta función la ejecutaremos antes que nada en nuestro agregarAlCarrito(producto)
+Ya con el parámetro de agregarAlCarrito tenemos acceso al ID que usaremos como argumento en el isInCart(producto.id)
+La igualamos el nombre existe en una variable, de ahi en adelante empezamos a usar un condicional para trabajar.
+
+Dentro del condicional en el que preguntamos si existe es verdadero, usamos el método map  y hacemos que devuelva un elemento por cada vuelta del mapeo.
+Dentro de él, creamos otro if, donde preguntamos si el id del elemento retornado por el map es igual al id retornado por el product, en ese caso pedimos que retorne un nuevo objeto que contenga {...elemento, quantity: elemento.quantity + product.quantity} 
+y en el else, que solo retorne el elemento en caso de no ser true
+Por último, lo seteamos con el nombre del nuevo array
+setCart(nuevoCart)
+Esto hará que cada vez que sumemos un producto que ya está en el carrito, éste se sume en quantity pero no en el producto entero como tal
+
+Para mostrar de manera dinámica el total del carrito usaremos el método reduce()
+Este metodo recibe en el callback el acumulador y despues el elemento
+El acumulador es aquéñ que lleve la cuenta, mientras que el elemento es la unidad en sí
+Le pedimos que retorne el acumulado + el precio por la cantidad de cada elemento.
+Luego de eso le ponemos como segundo parámetro el valor por el que queremos que comience el 'total'
+
+Usamos la misma metodología del reduce para hacer que aparezca la cantidad de productos.quantity en el widget del carrito y no solo la cantidad de productos que estan en el array (cart.length)

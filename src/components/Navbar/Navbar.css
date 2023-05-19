@@ -27,3 +27,5 @@ ul {
   color: rgb(224, 121, 255);
   transition: 0.3s;
 }
+@media (max-width: 640px) {
+}
