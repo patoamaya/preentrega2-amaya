@@ -1,16 +1,43 @@
 import { useFormik } from "formik";
 import FormCheckout from "./FormCheckout";
 import * as Yup from "yup";
+import { useContext } from "react";
+import { CartContext } from "../../context/CartContext";
+import { db } from "../../firebaseConfig";
+import {
+  addDoc,
+  collection,
+  serverTimestamp,
+  updateDoc,
+  doc,
+} from "firebase/firestore";
 
-const FormCheckoutContainer = () => {
+export const FormCheckoutContainer = () => {
+  const { cart, totalPrice } = useContext(CartContext);
+
+  const [orderId, setOrderId] = useState(null);
+
+  const checkoutFn = (data) => {
+    let total = totalPrice();
+    let dataOrder = {
+      buyer: data,
+      items: cart,
+      total: total,
+      date: serverTimestamp(),
+    };
+
+    const ordersCollection = collection(db, "orders");
+    addDoc(ordersCollection, dataOrder).then((res) => setOrderId[res.id]);
+  };
+
   const { handleSubmit, handleChange, errors } = useFormik({
     initialValues: {
       nombre: "",
       email: "",
-      contraseña: "",
-      confirmarContraseña: "",
+      telefono: "",
+      // confirmarContraseña: "",
     },
-    onSubmit: () => {},
+    onSubmit: checkoutFn,
     validationSchema: Yup.object().shape({
       nombre: Yup.string()
         .required("Este campo es obligatorio")
@@ -18,6 +45,7 @@ const FormCheckoutContainer = () => {
       email: Yup.string()
         .email("El campo debe contener un Email válido")
         .required("Este campo es obligatorio"),
+      telefono: Yup.number().required("Este campo es obligatorio"),
       contraseña: Yup.string()
         .required("Este campo es obligatorio")
         .matches(/^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{6,15}$/, {
@@ -33,13 +61,15 @@ const FormCheckoutContainer = () => {
 
   return (
     <div>
-      <FormCheckout
-        handleChange={handleChange}
-        handleSubmit={handleSubmit}
-        errors={errors}
-      />
+      {orderId ? (
+        <h1>`Su orden: ${orderId} ha sido procesada con exito`</h1>
+      ) : (
+        <FormCheckout
+          handleChange={handleChange}
+          handleSubmit={handleSubmit}
+          errors={errors}
+        />
+      )}
     </div>
   );
 };
-
-export default FormCheckoutContainer;
