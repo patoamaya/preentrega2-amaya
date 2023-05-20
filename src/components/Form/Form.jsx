@@ -3,8 +3,8 @@ import React, { useState } from "react";
 const Form = () => {
   const [userData, setUserData] = useState({
     nombre: "",
-    apellido: "",
-    telefono: "",
+    email: "",
+    contraseña: "",
   });
 
   const envioDeFormulario = (event) => {

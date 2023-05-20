@@ -21,7 +21,7 @@ export const Navbar = () => {
         setCategories(categoriesResult);
       })
       .catch((err) => err);
-  });
+  }, []);
 
   return (
     <div>

@@ -8,7 +8,8 @@ const CartContainer = () => {
   const { cart, eliminarProductoPorId, totalPrice, limpiarCarrito } =
     useContext(CartContext);
 
-  let total = totalPrice();
+  let total = getTotalPrice();
+  const navigate = useNavigate();
 
   const clearCartAlert = () => {
     Swal.fire({
